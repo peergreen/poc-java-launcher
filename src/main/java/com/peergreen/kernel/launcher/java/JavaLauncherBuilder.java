@@ -8,7 +8,7 @@ import com.peergreen.kernel.launcher.ILauncher;
 import com.peergreen.kernel.launcher.ILauncherBuilder;
 import com.peergreen.kernel.launcher.LaunchException;
 
-public class JavaLauncherBuilder implements ILauncherBuilder<JavaResult> {
+public class JavaLauncherBuilder implements ILauncherBuilder<Integer> {
     
     private String mainClass;
     private List<Argument> arguments;
@@ -82,7 +82,7 @@ public class JavaLauncherBuilder implements ILauncherBuilder<JavaResult> {
         this.javaExecutable = javaExecutable;
     }
 
-    public ILauncher<JavaResult> getLauncher() throws LaunchException {
+    public ILauncher<Integer> getLauncher() throws LaunchException {
         ProcessBuilder builder = new ProcessBuilder();
         
         // Prepare the command
@@ -157,8 +157,12 @@ public class JavaLauncherBuilder implements ILauncherBuilder<JavaResult> {
     }
 
     private String escape(File file) {
+        return escape(file.getAbsolutePath());
+    }
+
+    private String escape(String value) {
         return new StringBuilder().append('\"')
-                                  .append(file.getAbsolutePath())
+                                  .append(value)
                                   .append('\"')
                                   .toString();
     }

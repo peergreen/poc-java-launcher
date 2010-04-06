@@ -7,9 +7,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import com.peergreen.kernel.launcher.ILauncher;
+import com.peergreen.kernel.launcher.IStreams;
 import com.peergreen.kernel.launcher.LaunchException;
 
-public class JavaLauncher implements ILauncher<JavaResult> {
+public class JavaLauncher implements ILauncher<Integer> {
 
     private ProcessBuilder builder;
     private ExecutorService executor;
@@ -23,7 +24,7 @@ public class JavaLauncher implements ILauncher<JavaResult> {
         this.executor = executor;  
     }
 
-    public JavaResult launch() throws LaunchException {
+    public Integer launch(final IStreams streams) throws LaunchException {
         // Start the process
         Process process;
         try {
@@ -35,21 +36,21 @@ public class JavaLauncher implements ILauncher<JavaResult> {
         // Handle streams
         
         try {
-            JavaResult result = new JavaResult(process.getOutputStream(),
-                                               process.getErrorStream());
-            result.setResult(process.waitFor());
-            return result;
+            streams.setInput(process.getInputStream());
+            streams.setOutput(process.getOutputStream());
+            streams.setError(process.getErrorStream());
+            return process.waitFor();
         } catch (InterruptedException e) {
             throw new LaunchException(e);
         }
     }
 
-    public Future<JavaResult> launchAsynch() throws LaunchException {
+    public Future<Integer> launchAsynch(final IStreams streams) throws LaunchException {
         
-        Callable<JavaResult> callable = new Callable<JavaResult>() {
+        Callable<Integer> callable = new Callable<Integer>() {
 
-            public JavaResult call() throws Exception {
-                return launch();
+            public Integer call() throws Exception {
+                return launch(streams);
             }
         };
         

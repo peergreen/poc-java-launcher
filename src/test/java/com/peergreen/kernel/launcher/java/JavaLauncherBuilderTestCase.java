@@ -5,6 +5,7 @@ import static org.testng.Assert.assertNotNull;
 
 import java.io.File;
 
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -12,13 +13,17 @@ import com.peergreen.kernel.launcher.ILauncher;
 import com.peergreen.kernel.launcher.java.main.SystemExitMain;
 import com.peergreen.kernel.launcher.java.main.ThrowingExceptionMain;
 import com.peergreen.kernel.launcher.java.main.WithArgumentsMain;
+import com.peergreen.kernel.launcher.java.main.WithSpacedArgumentsMain;
+import com.peergreen.kernel.launcher.java.main.WithSystemPropertiesMain;
 
 public class JavaLauncherBuilderTestCase {
     
-    private JavaLauncherBuilder builder = new JavaLauncherBuilder();
+    private JavaLauncherBuilder builder;
     
-    @BeforeTest
+    @BeforeMethod
     public void setUp() {
+        
+        builder = new JavaLauncherBuilder();
         File home = new File(System.getProperty("java.home"));
         File javaExecutable = new File(home, "bin/java");
         Path java = new Path(javaExecutable);
@@ -34,11 +39,10 @@ public class JavaLauncherBuilderTestCase {
         
         builder.setMainClass(SystemExitMain.class.getName());
         
-        ILauncher<JavaResult> launcher = builder.getLauncher();
-        JavaResult result = launcher.launch();
+        ILauncher<Integer> launcher = builder.getLauncher();
+        int result = launcher.launch(new NullStreams());
         
-        assertNotNull(result);
-        assertEquals(result.getResult(), 3);
+        assertEquals(result, 3);
         
     }
 
@@ -48,12 +52,38 @@ public class JavaLauncherBuilderTestCase {
         
         builder.getArguments().add(new Argument("value"));
         
-        ILauncher<JavaResult> launcher = builder.getLauncher();
-        JavaResult result = launcher.launch();
+        ILauncher<Integer> launcher = builder.getLauncher();
+        int result = launcher.launch(new NullStreams());
         
-        assertNotNull(result);
         // Succesful result is 0
-        assertEquals(result.getResult(), 0);
+        assertEquals(result, 0);
+        
+    }
+
+    @Test
+    public void testCommandLineArgumentsWithSpaces() throws Exception {
+        builder.setMainClass(WithSpacedArgumentsMain.class.getName());
+        
+        builder.getArguments().add(new Argument("value with spaces"));
+        
+        ILauncher<Integer> launcher = builder.getLauncher();
+        int result = launcher.launch(new NullStreams());
+        
+        // Succesful result is 0
+        assertEquals(result, 0);
+        
+    }
+
+    @Test
+    public void testCommandLineSystemProperties() throws Exception {
+        builder.setMainClass(WithSystemPropertiesMain.class.getName());
+        
+        builder.getSystemProperties().add(new Property(WithSystemPropertiesMain.IS_PRESENT, "true"));
+        ILauncher<Integer> launcher = builder.getLauncher();
+        int result = launcher.launch(new NullStreams());
+        
+        // Succesful result is 0
+        assertEquals(result, 0);
         
     }
 
@@ -61,12 +91,11 @@ public class JavaLauncherBuilderTestCase {
     public void testCommandLineThrowingException() throws Exception {
         builder.setMainClass(ThrowingExceptionMain.class.getName());
         
-        ILauncher<JavaResult> launcher = builder.getLauncher();
-        JavaResult result = launcher.launch();
+        ILauncher<Integer> launcher = builder.getLauncher();
+        int result = launcher.launch(new NullStreams());
         
-        assertNotNull(result);
         // Failure result is 1
-        assertEquals(result.getResult(), 1);
+        assertEquals(result, 1);
         
     }
 
