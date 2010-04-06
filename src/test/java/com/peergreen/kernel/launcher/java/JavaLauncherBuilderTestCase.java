@@ -1,12 +1,10 @@
 package com.peergreen.kernel.launcher.java;
 
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
 
 import java.io.File;
 
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.peergreen.kernel.launcher.ILauncher;
