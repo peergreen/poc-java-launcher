@@ -12,7 +12,7 @@ public class WithSpacedArgumentsMain {
             throw new Exception();
         }
         
-        if (!"value".equals(args[0])) {
+        if (!"value with spaces".equals(args[0])) {
             throw new Exception();
         }
     }

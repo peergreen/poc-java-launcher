@@ -12,7 +12,7 @@ public class WithArgumentsMain {
             throw new Exception();
         }
         
-        if (!"value with spaces".equals(args[0])) {
+        if (!"value".equals(args[0])) {
             throw new Exception();
         }
     }
