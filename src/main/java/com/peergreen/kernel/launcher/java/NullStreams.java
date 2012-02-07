@@ -3,11 +3,11 @@ package com.peergreen.kernel.launcher.java;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import com.peergreen.kernel.launcher.IStreams;
+import com.peergreen.kernel.launcher.IOStreams;
 
-public class NullStreams implements IStreams {
+public class NullStreams implements IOStreams {
 
-    public void setError(InputStream inputStream) {}
+    public void setError(InputStream errorStream) {}
 
     public void setInput(InputStream inputStream) {}
 

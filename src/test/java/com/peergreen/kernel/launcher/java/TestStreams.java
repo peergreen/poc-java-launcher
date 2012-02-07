@@ -1,6 +1,6 @@
 package com.peergreen.kernel.launcher.java;
 
-import com.peergreen.kernel.launcher.IStreams;
+import com.peergreen.kernel.launcher.IOStreams;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -14,7 +14,7 @@ import java.io.OutputStream;
  * Time: 18:00
  * To change this template use File | Settings | File Templates.
  */
-public class TestStreams implements IStreams {
+public class TestStreams implements IOStreams {
     
     private OutputStream outputStream;
     

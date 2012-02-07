@@ -6,11 +6,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import com.peergreen.kernel.launcher.ILauncher;
-import com.peergreen.kernel.launcher.IStreams;
+import com.peergreen.kernel.launcher.Launcher;
+import com.peergreen.kernel.launcher.IOStreams;
 import com.peergreen.kernel.launcher.LaunchException;
 
-public class JavaLauncher implements ILauncher<Integer> {
+public class JavaLauncher implements Launcher<Integer> {
 
     private ProcessBuilder builder;
     private ExecutorService executor;
@@ -24,7 +24,7 @@ public class JavaLauncher implements ILauncher<Integer> {
         this.executor = executor;  
     }
 
-    public Integer launch(final IStreams streams) throws LaunchException {
+    public Integer launch(final IOStreams streams) throws LaunchException {
         // Start the process
         Process process;
         try {
@@ -45,7 +45,7 @@ public class JavaLauncher implements ILauncher<Integer> {
         }
     }
 
-    public Future<Integer> launchAsynch(final IStreams streams) throws LaunchException {
+    public Future<Integer> launchAsynch(final IOStreams streams) throws LaunchException {
         
         Callable<Integer> callable = new Callable<Integer>() {
 

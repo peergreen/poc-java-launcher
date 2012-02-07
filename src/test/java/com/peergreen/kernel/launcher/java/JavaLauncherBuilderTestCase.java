@@ -7,7 +7,7 @@ import java.io.File;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.peergreen.kernel.launcher.ILauncher;
+import com.peergreen.kernel.launcher.Launcher;
 import com.peergreen.kernel.launcher.java.main.SystemExitMain;
 import com.peergreen.kernel.launcher.java.main.ThrowingExceptionMain;
 import com.peergreen.kernel.launcher.java.main.WithArgumentsMain;
@@ -38,7 +38,7 @@ public class JavaLauncherBuilderTestCase {
         builder.setMainClass(SystemExitMain.class.getName());
 
         TestStreams streams = new TestStreams();
-        ILauncher<Integer> launcher = builder.getLauncher();
+        Launcher<Integer> launcher = builder.getLauncher();
         int result = launcher.launch(streams);
 
         assertEquals(result, 3);
@@ -57,7 +57,7 @@ public class JavaLauncherBuilderTestCase {
         builder.getArguments().add(new Argument("value"));
 
         TestStreams streams = new TestStreams();
-        ILauncher<Integer> launcher = builder.getLauncher();
+        Launcher<Integer> launcher = builder.getLauncher();
         int result = launcher.launch(streams);
 
         // Successful result is 0
@@ -72,7 +72,7 @@ public class JavaLauncherBuilderTestCase {
         builder.getArguments().add(new Argument("value with spaces"));
 
         TestStreams streams = new TestStreams();
-        ILauncher<Integer> launcher = builder.getLauncher();
+        Launcher<Integer> launcher = builder.getLauncher();
         int result = launcher.launch(streams);
 
         // Successful result is 0
@@ -87,7 +87,7 @@ public class JavaLauncherBuilderTestCase {
         builder.getSystemProperties().add(new Property(WithSystemPropertiesMain.IS_PRESENT, "true"));
 
         TestStreams streams = new TestStreams();
-        ILauncher<Integer> launcher = builder.getLauncher();
+        Launcher<Integer> launcher = builder.getLauncher();
         int result = launcher.launch(streams);
 
         // Successful result is 0
@@ -100,7 +100,7 @@ public class JavaLauncherBuilderTestCase {
         builder.setMainClass(ThrowingExceptionMain.class.getName());
 
         TestStreams streams = new TestStreams();
-        ILauncher<Integer> launcher = builder.getLauncher();
+        Launcher<Integer> launcher = builder.getLauncher();
         int result = launcher.launch(streams);
 
         // Failure result is 1

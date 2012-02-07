@@ -4,11 +4,11 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.peergreen.kernel.launcher.ILauncher;
-import com.peergreen.kernel.launcher.ILauncherBuilder;
+import com.peergreen.kernel.launcher.Launcher;
+import com.peergreen.kernel.launcher.LauncherBuilder;
 import com.peergreen.kernel.launcher.LaunchException;
 
-public class JavaLauncherBuilder implements ILauncherBuilder<Integer> {
+public class JavaLauncherBuilder implements LauncherBuilder<Integer> {
     
     private String mainClass;
     private List<Argument> arguments;
@@ -82,7 +82,7 @@ public class JavaLauncherBuilder implements ILauncherBuilder<Integer> {
         this.javaExecutable = javaExecutable;
     }
 
-    public ILauncher<Integer> getLauncher() throws LaunchException {
+    public Launcher<Integer> getLauncher() throws LaunchException {
         ProcessBuilder builder = new ProcessBuilder();
         
         // Prepare the command
