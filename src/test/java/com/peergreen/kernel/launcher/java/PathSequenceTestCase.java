@@ -15,8 +15,6 @@ import java.io.File;
 public class PathSequenceTestCase {
     @Test
     public void testRenderEmpty() throws Exception {
-        File home = new File(System.getProperty("java.home"));
-
         PathSequence sequence = new PathSequence();
         Assert.assertEquals(sequence.render(), "");
 

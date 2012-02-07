@@ -17,6 +17,9 @@ public class JavaLauncherBuilder implements LauncherBuilder<Integer> {
     private List<VmOption> options;
     private List<Property> systemProperties;
     private File javaExecutable;
+    private List<AgentLib> agentLibs;
+    private List<AgentPath> agentPaths;
+    private List<JavaAgent> javaAgents;
     
     public JavaLauncherBuilder() {
         this.arguments = new ArrayList<Argument>();
@@ -24,6 +27,9 @@ public class JavaLauncherBuilder implements LauncherBuilder<Integer> {
         this.classpath = new PathSequence();
         this.options = new ArrayList<VmOption>();
         this.systemProperties = new ArrayList<Property>();
+        this.agentLibs = new ArrayList<AgentLib>();
+        this.agentPaths = new ArrayList<AgentPath>();
+        this.javaAgents = new ArrayList<JavaAgent>();
     }
     
     public String getMainClass() {
@@ -62,6 +68,18 @@ public class JavaLauncherBuilder implements LauncherBuilder<Integer> {
         this.javaExecutable = javaExecutable;
     }
 
+    public List<AgentPath> getAgentPaths() {
+        return agentPaths;
+    }
+
+    public List<AgentLib> getAgentLibs() {
+        return agentLibs;
+    }
+
+    public List<JavaAgent> getJavaAgents() {
+        return javaAgents;
+    }
+
     public Launcher<Integer> getLauncher() throws LaunchException {
         ProcessBuilder builder = new ProcessBuilder();
         
@@ -83,7 +101,28 @@ public class JavaLauncherBuilder implements LauncherBuilder<Integer> {
         if (!endorsedDirectories.getSequence().isEmpty()) {
             command.add(endorsedProperty(endorsedDirectories.render()));
         }
-        
+
+        // Handle agents with libraries
+        if (!agentLibs.isEmpty()) {
+            for (AgentLib lib : agentLibs) {
+                command.add(lib.render());
+            }
+        }
+
+        // Handle agents with paths
+        if (!agentPaths.isEmpty()) {
+            for (AgentPath path : agentPaths) {
+                command.add(path.render());
+            }
+        }
+
+        // Handle java agents
+        if (!javaAgents.isEmpty()) {
+            for (JavaAgent javaAgent : javaAgents) {
+                command.add(javaAgent.render());
+            }
+        }
+
         // Handle classpath
         // TODO Optimize if too long (use env variable CLASSPATH)
         if (!classpath.getSequence().isEmpty()) {
