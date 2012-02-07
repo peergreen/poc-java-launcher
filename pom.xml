@@ -35,17 +35,11 @@
     </license>
   </licenses>
 
-  <scm>
-    <connection>scm:git:git://github.com/sauthieg/text-ui.git</connection>
-    <developerConnection>scm:git:ssh://git@github.com/sauthieg/text-ui.git</developerConnection>
-    <url>http://github.com/sauthieg/text-ui</url>
-  </scm>
-
   <developers>
     <developer>
       <id>sauthieg</id>
       <name>Guillaume Sauthier</name>
-      <email>guillaume.sauthier@ow2.org</email>
+      <email>guillaume.sauthier@peergreen.com</email>
       <roles>
         <role>Developer</role>         
       </roles>
@@ -56,8 +50,7 @@
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
-      <classifier>jdk15</classifier>
-      <version>5.9</version>
+      <version>5.14</version>
       <scope>test</scope>
     </dependency> 
   </dependencies>

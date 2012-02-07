@@ -36,12 +36,18 @@ public class JavaLauncherBuilderTestCase {
     public void testSimpleCommandLine() throws Exception {
         
         builder.setMainClass(SystemExitMain.class.getName());
-        
+
+        TestStreams streams = new TestStreams();
         ILauncher<Integer> launcher = builder.getLauncher();
-        int result = launcher.launch(new NullStreams());
-        
+        int result = launcher.launch(streams);
+
         assertEquals(result, 3);
         
+    }
+
+    private void showOutputs(TestStreams streams) {
+        System.out.println("Error: " + streams.getProcessError());
+        System.out.println("Outout: " + streams.getProcessOutput());
     }
 
     @Test
@@ -49,11 +55,12 @@ public class JavaLauncherBuilderTestCase {
         builder.setMainClass(WithArgumentsMain.class.getName());
         
         builder.getArguments().add(new Argument("value"));
-        
+
+        TestStreams streams = new TestStreams();
         ILauncher<Integer> launcher = builder.getLauncher();
-        int result = launcher.launch(new NullStreams());
-        
-        // Succesful result is 0
+        int result = launcher.launch(streams);
+
+        // Successful result is 0
         assertEquals(result, 0);
         
     }
@@ -63,11 +70,12 @@ public class JavaLauncherBuilderTestCase {
         builder.setMainClass(WithSpacedArgumentsMain.class.getName());
         
         builder.getArguments().add(new Argument("value with spaces"));
-        
+
+        TestStreams streams = new TestStreams();
         ILauncher<Integer> launcher = builder.getLauncher();
-        int result = launcher.launch(new NullStreams());
-        
-        // Succesful result is 0
+        int result = launcher.launch(streams);
+
+        // Successful result is 0
         assertEquals(result, 0);
         
     }
@@ -75,12 +83,14 @@ public class JavaLauncherBuilderTestCase {
     @Test
     public void testCommandLineSystemProperties() throws Exception {
         builder.setMainClass(WithSystemPropertiesMain.class.getName());
-        
+
         builder.getSystemProperties().add(new Property(WithSystemPropertiesMain.IS_PRESENT, "true"));
+
+        TestStreams streams = new TestStreams();
         ILauncher<Integer> launcher = builder.getLauncher();
-        int result = launcher.launch(new NullStreams());
-        
-        // Succesful result is 0
+        int result = launcher.launch(streams);
+
+        // Successful result is 0
         assertEquals(result, 0);
         
     }
@@ -88,10 +98,11 @@ public class JavaLauncherBuilderTestCase {
     @Test
     public void testCommandLineThrowingException() throws Exception {
         builder.setMainClass(ThrowingExceptionMain.class.getName());
-        
+
+        TestStreams streams = new TestStreams();
         ILauncher<Integer> launcher = builder.getLauncher();
-        int result = launcher.launch(new NullStreams());
-        
+        int result = launcher.launch(streams);
+
         // Failure result is 1
         assertEquals(result, 1);
         

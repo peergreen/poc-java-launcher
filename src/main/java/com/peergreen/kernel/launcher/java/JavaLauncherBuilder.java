@@ -87,7 +87,7 @@ public class JavaLauncherBuilder implements ILauncherBuilder<Integer> {
         
         // Prepare the command
         List<String> command = builder.command();
-        command.add(escape(javaExecutable.getValue()));
+        command.add(javaExecutable.getValue().getAbsolutePath());
         
         // Handle VM Options (-X)
         for (VmOption option : options) {
@@ -136,7 +136,7 @@ public class JavaLauncherBuilder implements ILauncherBuilder<Integer> {
         for (Argument arg : arguments) {
             command.add(arg.getValue());
         }
-        
+
         // Create the launcher
         return new JavaLauncher(builder);
 
@@ -161,10 +161,15 @@ public class JavaLauncherBuilder implements ILauncherBuilder<Integer> {
     }
 
     private String escape(String value) {
-        return new StringBuilder().append('\"')
-                                  .append(value)
-                                  .append('\"')
-                                  .toString();
+/*
+        if (!value.startsWith("\"")) {
+            return new StringBuilder().append('\"')
+                    .append(value)
+                    .append('\"')
+                    .toString();
+        }
+*/
+        return value;
     }
 
 }
