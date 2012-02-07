@@ -24,12 +24,11 @@ public class JavaLauncherBuilderTestCase {
         builder = new JavaLauncherBuilder();
         File home = new File(System.getProperty("java.home"));
         File javaExecutable = new File(home, "bin/java");
-        Path java = new Path(javaExecutable);
-        builder.setJavaExecutable(java);
+        builder.setJavaExecutable(javaExecutable);
 
         File basedir = new File(System.getProperty("basedir"));
         File targetTestClasses = new File(basedir, "target/test-classes");
-        builder.getClasspath().add(new Path(targetTestClasses));
+        builder.getClasspath().getSequence().add(targetTestClasses);
     }
     
     @Test

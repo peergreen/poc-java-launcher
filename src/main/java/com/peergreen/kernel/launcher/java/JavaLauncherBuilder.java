@@ -12,16 +12,16 @@ public class JavaLauncherBuilder implements LauncherBuilder<Integer> {
     
     private String mainClass;
     private List<Argument> arguments;
-    private List<Path> endorsedDirectories;
-    private List<Path> classpath;
+    private PathSequence endorsedDirectories;
+    private PathSequence classpath;
     private List<VmOption> options;
     private List<Property> systemProperties;
-    private Path javaExecutable;
+    private File javaExecutable;
     
     public JavaLauncherBuilder() {
         this.arguments = new ArrayList<Argument>();
-        this.endorsedDirectories = new ArrayList<Path>();
-        this.classpath = new ArrayList<Path>();
+        this.endorsedDirectories = new PathSequence();
+        this.classpath = new PathSequence();
         this.options = new ArrayList<VmOption>();
         this.systemProperties = new ArrayList<Property>();
     }
@@ -38,47 +38,27 @@ public class JavaLauncherBuilder implements LauncherBuilder<Integer> {
         return arguments;
     }
 
-    public void setArguments(List<Argument> arguments) {
-        this.arguments = arguments;
-    }
-
-    public List<Path> getEndorsedDirectories() {
+    public PathSequence getEndorsedDirectories() {
         return endorsedDirectories;
     }
 
-    public void setEndorsedDirectories(List<Path> endorsedDirectories) {
-        this.endorsedDirectories = endorsedDirectories;
-    }
-
-    public List<Path> getClasspath() {
+    public PathSequence getClasspath() {
         return classpath;
-    }
-
-    public void setClasspath(List<Path> classpath) {
-        this.classpath = classpath;
     }
 
     public List<VmOption> getOptions() {
         return options;
     }
 
-    public void setOptions(List<VmOption> options) {
-        this.options = options;
-    }
-
     public List<Property> getSystemProperties() {
         return systemProperties;
     }
 
-    public void setSystemProperties(List<Property> systemProperties) {
-        this.systemProperties = systemProperties;
-    }
-
-    public Path getJavaExecutable() {
+    public File getJavaExecutable() {
         return javaExecutable;
     }
 
-    public void setJavaExecutable(Path javaExecutable) {
+    public void setJavaExecutable(File javaExecutable) {
         this.javaExecutable = javaExecutable;
     }
 
@@ -87,46 +67,28 @@ public class JavaLauncherBuilder implements LauncherBuilder<Integer> {
         
         // Prepare the command
         List<String> command = builder.command();
-        command.add(javaExecutable.getValue().getAbsolutePath());
+        command.add(javaExecutable.getAbsolutePath());
         
         // Handle VM Options (-X)
         for (VmOption option : options) {
-            command.add(option.getValue());
+            command.add(option.render());
         }
         
         // Handle system properties
         for (Property property : systemProperties) {
-            command.add(systemProperty(property));
+            command.add(property.render());
         }
         
         // Handle endorsed directory
-        if (!endorsedDirectories.isEmpty()) {
-            StringBuilder endorsed = new StringBuilder();
-            boolean first = true;
-            for (Path path : endorsedDirectories) {
-                if (!first) {
-                    endorsed.append(File.pathSeparatorChar);
-                }
-                endorsed.append(escape(path.getValue()));
-                first = false;
-            }
-            command.add(endorsedProperty(endorsed.toString()));
+        if (!endorsedDirectories.getSequence().isEmpty()) {
+            command.add(endorsedProperty(endorsedDirectories.render()));
         }
         
         // Handle classpath
         // TODO Optimize if too long (use env variable CLASSPATH)
-        if (!classpath.isEmpty()) {
+        if (!classpath.getSequence().isEmpty()) {
             command.add("-cp");
-            StringBuilder path = new StringBuilder();
-            boolean first = true;
-            for (Path element : classpath) {
-                if (!first) {
-                    path.append(File.pathSeparatorChar);
-                }
-                path.append(escape(element.getValue()));
-                first = false;
-            }
-            command.add(path.toString());
+            command.add(classpath.render());
         }
         
         // Handle main        
@@ -134,7 +96,7 @@ public class JavaLauncherBuilder implements LauncherBuilder<Integer> {
         
         // Handle arguments
         for (Argument arg : arguments) {
-            command.add(arg.getValue());
+            command.add(arg.render());
         }
 
         // Create the launcher
@@ -144,32 +106,7 @@ public class JavaLauncherBuilder implements LauncherBuilder<Integer> {
     }
 
     private String endorsedProperty(String endorsed) {
-        Property property = new Property("java.endorsed.dirs", endorsed);
-        return systemProperty(property);
-    }
-
-    private String systemProperty(Property property) {
-        return new StringBuilder().append("-D")
-                                  .append(property.getName())
-                                  .append('=')
-                                  .append(property.getValue())
-                                  .toString();
-    }
-
-    private String escape(File file) {
-        return escape(file.getAbsolutePath());
-    }
-
-    private String escape(String value) {
-/*
-        if (!value.startsWith("\"")) {
-            return new StringBuilder().append('\"')
-                    .append(value)
-                    .append('\"')
-                    .toString();
-        }
-*/
-        return value;
+        return new Property("java.endorsed.dirs", endorsed).render();
     }
 
 }
