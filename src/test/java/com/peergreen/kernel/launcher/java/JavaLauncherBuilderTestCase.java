@@ -1,9 +1,12 @@
 package com.peergreen.kernel.launcher.java;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 import java.io.File;
+import java.util.concurrent.Future;
 
+import com.peergreen.kernel.launcher.java.main.WaitingTwoSecondsMain;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -30,10 +33,10 @@ public class JavaLauncherBuilderTestCase {
         File targetTestClasses = new File(basedir, "target/test-classes");
         builder.getClasspath().getSequence().add(targetTestClasses);
     }
-    
+
     @Test
     public void testSimpleCommandLine() throws Exception {
-        
+
         builder.setMainClass(SystemExitMain.class.getName());
 
         TestStreams streams = new TestStreams();
@@ -41,7 +44,30 @@ public class JavaLauncherBuilderTestCase {
         int result = launcher.launch(streams);
 
         assertEquals(result, 3);
-        
+
+    }
+
+    @Test
+    public void testAsynchronousCommandLine() throws Exception {
+
+        builder.setMainClass(WaitingTwoSecondsMain.class.getName());
+
+        TestStreams streams = new TestStreams();
+        Launcher<Integer> launcher = builder.getLauncher();
+
+        long start = System.currentTimeMillis();
+        Future<Integer> future = launcher.launchAsynch(streams);
+
+        int result = future.get();
+        long elapsed = System.currentTimeMillis() - start;
+
+        // Ensure execution was successful
+        assertEquals(result, 0);
+
+        // Ensure that we waited more than the time used by the process
+        long waitedInProcess = Integer.valueOf(streams.getProcessOutput().trim());
+        assertTrue(waitedInProcess < elapsed);
+
     }
 
     private void showOutputs(TestStreams streams) {
