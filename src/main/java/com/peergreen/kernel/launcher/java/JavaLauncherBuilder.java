@@ -22,6 +22,18 @@ public class JavaLauncherBuilder implements LauncherBuilder<Integer> {
         }
     }
 
+    public enum VerboseOption implements Switch {
+        CLASS("-verbose:class"), GC("-verbose:gc"), JNI("-verbose:jni");
+        private String cli;
+        private VerboseOption(String cli) {
+            this.cli = cli;
+        }
+
+        public String render() {
+            return cli;
+        }
+    }
+
     private String mainClass;
     private List<Argument> arguments;
     private PathSequence endorsedDirectories;
@@ -33,6 +45,7 @@ public class JavaLauncherBuilder implements LauncherBuilder<Integer> {
     private List<AgentPath> agentPaths;
     private List<JavaAgent> javaAgents;
     private Mode mode;
+    private List<VerboseOption> verboseOptions;
     
     public JavaLauncherBuilder() {
         this.arguments = new ArrayList<Argument>();
@@ -43,6 +56,7 @@ public class JavaLauncherBuilder implements LauncherBuilder<Integer> {
         this.agentLibs = new ArrayList<AgentLib>();
         this.agentPaths = new ArrayList<AgentPath>();
         this.javaAgents = new ArrayList<JavaAgent>();
+        this.verboseOptions = new ArrayList<VerboseOption>();
     }
     
     public String getMainClass() {
@@ -97,6 +111,10 @@ public class JavaLauncherBuilder implements LauncherBuilder<Integer> {
         this.mode = mode;
     }
 
+    public List<VerboseOption> getVerboseOptions() {
+        return verboseOptions;
+    }
+
     public Launcher<Integer> getLauncher() throws LaunchException {
         ProcessBuilder builder = new ProcessBuilder();
         
@@ -111,6 +129,12 @@ public class JavaLauncherBuilder implements LauncherBuilder<Integer> {
 
         if (mode != null) {
             command.add(mode.render());
+        }
+
+        if (!verboseOptions.isEmpty()) {
+            for (VerboseOption verbose : verboseOptions) {
+                command.add(verbose.render());
+            }
         }
         
         // Handle system properties
