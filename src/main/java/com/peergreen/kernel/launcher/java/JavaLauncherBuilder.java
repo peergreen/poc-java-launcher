@@ -9,7 +9,19 @@ import com.peergreen.kernel.launcher.LauncherBuilder;
 import com.peergreen.kernel.launcher.LaunchException;
 
 public class JavaLauncherBuilder implements LauncherBuilder<Integer> {
-    
+
+    public enum Mode implements Switch {
+        CLIENT("-client"), SERVER("-server");
+        private String cli;
+        private Mode(String cli) {
+            this.cli = cli;
+        }
+
+        public String render() {
+            return cli;
+        }
+    }
+
     private String mainClass;
     private List<Argument> arguments;
     private PathSequence endorsedDirectories;
@@ -20,6 +32,7 @@ public class JavaLauncherBuilder implements LauncherBuilder<Integer> {
     private List<AgentLib> agentLibs;
     private List<AgentPath> agentPaths;
     private List<JavaAgent> javaAgents;
+    private Mode mode;
     
     public JavaLauncherBuilder() {
         this.arguments = new ArrayList<Argument>();
@@ -80,6 +93,10 @@ public class JavaLauncherBuilder implements LauncherBuilder<Integer> {
         return javaAgents;
     }
 
+    public void setMode(Mode mode) {
+        this.mode = mode;
+    }
+
     public Launcher<Integer> getLauncher() throws LaunchException {
         ProcessBuilder builder = new ProcessBuilder();
         
@@ -90,6 +107,10 @@ public class JavaLauncherBuilder implements LauncherBuilder<Integer> {
         // Handle VM Options (-X)
         for (VmOption option : options) {
             command.add(option.render());
+        }
+
+        if (mode != null) {
+            command.add(mode.render());
         }
         
         // Handle system properties
